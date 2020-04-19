@@ -11,7 +11,8 @@
 	let filterOptions = [];
 	let appliedFilters = [];
 	onMount(async function() {
-        const response = await fetch("https://jsonplaceholder.typicode.com/photos");
+        //const response = await fetch("https://jsonplaceholder.typicode.com/photos");
+        const response = await fetch("http://localhost:3000/photos");
         items = await response.json();
         // remove slice after filtering is figured out...
         //items = items.slice(1, 10);
@@ -26,8 +27,9 @@
 				? appliedFilters.some(filter => {
 					let filterParts = filter.split(':');
 					let filterId = filterParts[0];
-					let filterValue = filterParts[1];
-					return filterValue === item[filterId].toString();
+					let filterValue = filterParts[1].toLowerCase();
+					let itemValue = (item[filterId] !== undefined ? item[filterId].toString().toLowerCase() : '');
+					return filterValue === itemValue;
 				})
 				: item
 	}
@@ -36,8 +38,8 @@
 	$: filteredItemsList =
 			(query && query.length) || (appliedFilters && appliedFilters.length)
 			? items
-				.filter(item => stringContains(item.title, query))
-				.filter(item => matchesAppliedFilters(item))
+				.filter(item => stringContains(item.title, query) && matchesAppliedFilters(item))
+				//.filter(item => matchesAppliedFilters(item))
 			: items;
 </script>
 
